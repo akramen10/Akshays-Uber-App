@@ -29,13 +29,11 @@ const HomeScreen = () => {
             container: {
               flex: 0
             },
-            textInout: {
+            textInput: {
               fontSize:18
             },
           }}
-          onPress={(data, details = null) => {
-              console.log(details);
-              console.log(data);
+          onPress={(data, details) => {
               dispatch(setOrigin({
                 location: details.geometry.location,
                 description: data.descripton,
