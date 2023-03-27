@@ -2,15 +2,36 @@ import { StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 import tw from "tailwind-react-native-classnames";
 import MapView from 'react-native-maps';
-import MapViewComponent from './components/Map';
+import MapViewComponent from '../components/Map';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import NavigationCard from '../components/NavigationCard';
+import RideOptionsCard from "../components/RideOptionsCard";
 
 const MapScreen = () => {
+  const Stack = createNativeStackNavigator();
   return (
     <View>
-      <Text>Here is the map stuff..</Text>
-      <View style={tw `h-1/2`}>
+      <View style={tw `h-1/3`}>
         <MapViewComponent/>
-      </View>
+    </View>
+     <View style={tw`h-2/3`}>
+        <Stack.Navigator>
+          <Stack.Screen
+            name="NavigationCard"
+            component={NavigationCard}
+            options={{
+              headerShown: false,
+            }}
+          />
+          <Stack.Screen
+            name="RideOptionsCard"
+            component={RideOptionsCard}
+            options={{
+              headerShown: false,
+            }}
+          />
+        </Stack.Navigator>
+    </View>
     </View>
   )
 }
