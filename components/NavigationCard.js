@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, SafeAreaView, KeyboardAvoidingView, ScrollView } from 'react-native'
+import { StyleSheet, Text, View, SafeAreaView } from 'react-native'
 import React from 'react'
 import tw from 'tailwind-react-native-classnames';
 import { GooglePlacesAutocomplete } from "react-native-google-places-autocomplete";
@@ -6,14 +6,14 @@ import {GOOGLE_MAPS_APIKEY} from "@env";
 import { useDispatch } from 'react-redux';
 import { setDestination } from '../slices/navSlice';
 import { useNavigation } from '@react-navigation/native';
+import NavFavorites from './NavFavorites';
 
 const NavigationCard = () => {
   const dispatch = useDispatch();
   const navigation = useNavigation();
   return (
-    <KeyboardAvoidingView style={{flex: 1}} behavior="padding">
     <SafeAreaView style={tw`bg-white flex-1`}> 
-      <Text style={tw`text-center py-5 text-xl`}>Hello! Welcome to Akshay's Uber</Text>
+      <Text style={tw`text-center py-5 text-xl`}>Hello! Welcome to Akshay's Uber App</Text>
       <View style={tw `border-t border-gray-200 flex-shrink`}>
         <View>
             <GooglePlacesAutocomplete 
@@ -35,13 +35,12 @@ const NavigationCard = () => {
             }}
             nearbyPlacesAPI='GooglePlacesSearch'
             debounce={400}
-            rednerScrollView={(props) => <ScrollView {...props}/>}
 
             />
         </View>
+        <NavFavorites/>
       </View>
     </SafeAreaView>
-    </KeyboardAvoidingView>
   )
 }
 
