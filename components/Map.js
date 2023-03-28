@@ -3,9 +3,10 @@ import React, { useState, useEffect, useRef } from 'react';
 import MapView, { Marker } from 'react-native-maps';
 import tw from "tailwind-react-native-classnames";
 import { useSelector } from 'react-redux';
-import { selectDestination, selectOrigin} from "../slices/navSlice";
+import { selectDestination, selectOrigin, setTravelTimeInformation} from "../slices/navSlice";
 import MapViewDirections from 'react-native-maps-directions';
 import {GOOGLE_MAPS_APIKEY} from "@env";
+import { useDispatch } from 'react-redux';
 import getPlaceId from './GoogleMapsUtils';
 
 
@@ -17,6 +18,7 @@ const MapViewComponent = () => {
   const [originPlaceId, setOriginPlaceId] = useState(null);
   const [destinationPlaceId, setDestinationPlaceId] = useState(null);
   const mapRef = useRef(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (!origin || !destination) return;
@@ -26,15 +28,43 @@ const MapViewComponent = () => {
 
   useEffect(() => {
     const getDirections = async () => {
+    try{
       if (origin && destination) {
         const originId = await getPlaceId(origin.location.lat, origin.location.lng);
         const destinationId = await getPlaceId(destination.location.lat, destination.location.lng);
         setOriginPlaceId("place_id:" + originId);
         setDestinationPlaceId("place_id:" + destinationId);
+        console.log("place_id:" + originId);
+        console.log("place_id:" + destinationId);
       }
+    }
+    catch (error) {
+      console.log("Error in getDirections():", error);
+    }
     };
     getDirections();
   }, [origin, destination]);
+
+  useEffect(() => {
+    if (!origin || !destination || !originPlaceId || !destinationPlaceId) return;
+      const getTravelTime = () => {
+          try {
+            const url = `https://maps.googleapis.com/maps/api/distancematrix/json?units=imperial&origins=${originPlaceId}&destinations=${destinationPlaceId}&key=${GOOGLE_MAPS_APIKEY}`
+            console.log("API Request URL:", url);
+            fetch(url).then((res) => res.json()).then(
+              data => {
+                const distance = data.rows[0].elements[0];
+                console.log(distance);
+                dispatch(setTravelTimeInformation(distance));
+           }).catch(error => {
+            console.log("Error in getTravelTime():", error);
+          });
+          } catch (error) {
+            console.log("Error in getTravelTime():", error);
+          }
+        };
+        getTravelTime();
+  }, [origin, destination, GOOGLE_MAPS_APIKEY, originPlaceId, destinationPlaceId]);
 
   return (  
     <MapView 
